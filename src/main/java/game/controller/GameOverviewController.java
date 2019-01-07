@@ -86,25 +86,7 @@ public class GameOverviewController {
         ImageView[] commandImages = {forwardImage,leftImage,rightImage,loopImage};
 
         for (ImageView iv : commandImages){
-            iv.setOnDragDetected(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    Dragboard db = iv.startDragAndDrop(TransferMode.ANY);
-                    ClipboardContent content = new ClipboardContent();
-                    content.putImage(iv.getImage());
-                    db.setContent(content);
-                    event.consume();
-                }
-            });
-
-            iv.setOnDragDone(new EventHandler<DragEvent>() {
-                @Override
-                public void handle(DragEvent event) {
-                    if(event.getAcceptedTransferMode()!=null){
-                        iv.getOnMouseClicked().handle(null);
-                    }
-                }
-            });
+            setDragDrop(iv);
         }
 
 
@@ -171,6 +153,28 @@ public class GameOverviewController {
 
     }
 
+    private void setDragDrop(ImageView iv){
+        iv.setOnDragDetected(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                Dragboard db = iv.startDragAndDrop(TransferMode.ANY);
+                ClipboardContent content = new ClipboardContent();
+                content.putImage(iv.getImage());
+                db.setContent(content);
+                event.consume();
+            }
+        });
+
+        iv.setOnDragDone(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+                if(event.getAcceptedTransferMode()!=null){
+                    iv.getOnMouseClicked().handle(null);
+                }
+            }
+        });
+    }
+
     public void addCommand(ITurtleCommand command) {
         commandSequence.addCommand(command);
 //        commandSeq.setText(commandSeq.getText() + command.getName());
@@ -204,6 +208,7 @@ public class GameOverviewController {
         });
 
         customCommandsBox.getChildren().addAll(customCommandImage);
+        setDragDrop(customCommandImage);
     }
 
     @FXML
