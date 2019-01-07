@@ -67,7 +67,7 @@ public class Board {
 
     public Boolean canMoveTo(int x, int y){
         if (x>=0 && y>=0)
-            return (x >= 0 && x < 5 && y >= 0 && y < 5 && fields[y][x].isVisible());
+            return (x >= 0 && x < boardSize && y >= 0 && y < boardSize && fields[y][x].isVisible());
         else
             return false;
     }
@@ -80,8 +80,8 @@ public class Board {
     }
 
     public Boolean allVisited(){
-        for (int i=0; i<5; i++) {
-            for (int j=0; j<5; j++) {
+        for (int i=0; i<boardSize; i++) {
+            for (int j=0; j<boardSize; j++) {
                 if (fields[i][j].isVisible() && !fields[i][j].isVisited())
                     return false;
             }

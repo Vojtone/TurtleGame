@@ -11,7 +11,6 @@ public class CustomCommand implements ITurtleCommand {
     }
 
 
-
     @Override
     public boolean execute() {
 
