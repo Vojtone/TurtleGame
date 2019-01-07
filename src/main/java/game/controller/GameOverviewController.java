@@ -199,14 +199,15 @@ public class GameOverviewController {
         customCommandImage.setFitHeight(50);
         ColorAdjust hue = new ColorAdjust(random(),0,0,0);
         hue.setInput(shadow);
+        customEffects.add(hue);
         customCommandImage.setEffect(hue);
 
 
         customCommandImage.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-
-                addCommandToBox(customCommandImage.getImage());
+                int effectIndex = customCommandsBox.getChildren().indexOf(customCommandImage);
+                addCommandToBox(customCommandImage.getImage(),customEffects.get(effectIndex));
                 addCommand(customCommandToAdd);
             }
         });
@@ -221,7 +222,7 @@ public class GameOverviewController {
         commandSequence.addCommand(new StepForwardCommand(boardData));
 //        commandSeq.setText(commandSeq.getText() + "F\n");
         System.out.println("Step forward event fired.");
-        addCommandToBox(forwardImage.getImage());
+        addCommandToBox(forwardImage.getImage(),null);
     }
 
     @FXML
@@ -229,7 +230,7 @@ public class GameOverviewController {
         commandSequence.addCommand(new TurnLeftCommand(boardData));
 //        commandSeq.setText(commandSeq.getText() + "L\n");
         System.out.println("Turn left event fired.");
-        addCommandToBox(leftImage.getImage());
+        addCommandToBox(leftImage.getImage(),null);
     }
 
     @FXML
@@ -237,7 +238,7 @@ public class GameOverviewController {
         commandSequence.addCommand(new TurnRightCommand(boardData));
 //        commandSeq.setText(commandSeq.getText() + "R\n");
         System.out.println("Turn right event fired.");
-        addCommandToBox(rightImage.getImage());
+        addCommandToBox(rightImage.getImage(),null);
     }
 
     @FXML
@@ -333,7 +334,7 @@ public class GameOverviewController {
         appController.showLoopDialog();
     }
 
-    private void addCommandToBox(Image image) {
+    private void addCommandToBox(Image image, Effect effect) {
         //prepare ImageView
         ImageView imageToAdd = new ImageView();
         imageToAdd.setEffect(shadow);
@@ -341,6 +342,10 @@ public class GameOverviewController {
         imageToAdd.setFitWidth(50);
         imageToAdd.setImage(image);
         imageToAdd.setVisible(true);
+
+        if(effect!=null){
+            imageToAdd.setEffect(effect);
+        }
 
         //prepare container for ImageView, set padding and insert image
         HBox container = new HBox();
