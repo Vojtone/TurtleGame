@@ -32,7 +32,7 @@ import javafx.util.Duration;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.LinkedList;
+import java.util.*;
 
 import static java.lang.Math.*;
 
@@ -78,12 +78,15 @@ public class GameOverviewController {
     double fieldSize, border, padding;
 
     private Effect shadow = new DropShadow(20, 2, 2, Color.BLACK);
-
+    private List<Effect> customEffects = new LinkedList<Effect>();
+    private List<ImageView> commandImages = new LinkedList<ImageView>();
 
     @FXML
     private void initialize() {
-
-        ImageView[] commandImages = {forwardImage,leftImage,rightImage,loopImage};
+        commandImages.add(forwardImage);
+        commandImages.add(rightImage);
+        commandImages.add(leftImage);
+        commandImages.add(loopImage);
 
         for (ImageView iv : commandImages){
             setDragDrop(iv);
@@ -194,8 +197,9 @@ public class GameOverviewController {
         ImageView customCommandImage = new ImageView(customCommand.getImage());
         customCommandImage.setFitWidth(50);
         customCommandImage.setFitHeight(50);
-        customCommandImage.setEffect(shadow);
-        customCommandImage.setEffect(new ColorAdjust(20,0,0,0));
+        ColorAdjust hue = new ColorAdjust(random(),0,0,0);
+        hue.setInput(shadow);
+        customCommandImage.setEffect(hue);
 
 
         customCommandImage.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -209,6 +213,7 @@ public class GameOverviewController {
 
         customCommandsBox.getChildren().addAll(customCommandImage);
         setDragDrop(customCommandImage);
+        handleResetAction(null);
     }
 
     @FXML
@@ -347,18 +352,8 @@ public class GameOverviewController {
         commandBox.getChildren().addAll(container);
 
         //on click delete
-        container.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                HBox c = (HBox) event.getSource();
-                int index = c.getParent().getChildrenUnmodifiable().indexOf(c);
-
-                commandSequence.removeCommand(index);
-                commandBox.getChildren().remove(c);
-            }
-        });
+        setDeleteOnClick(container);
     }
-
 
     public void addLoopToBox(LoopCommand loop) {
         try { //loopBox - box to add to commands
@@ -394,16 +389,7 @@ public class GameOverviewController {
             iters.setEffect(new DropShadow(5,Color.BLACK));
             loopBox.getChildren().add(iters);
 
-            loopBox.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    HBox c = (HBox) event.getSource();
-                    int index = c.getParent().getChildrenUnmodifiable().indexOf(c);
-
-                    commandSequence.removeCommand(index);
-                    commandBox.getChildren().remove(c);
-                }
-            });
+            setDeleteOnClick(loopBox);
 
             //add loopBox to commandBox
             commandBox.getChildren().add(loopBox);
@@ -413,7 +399,18 @@ public class GameOverviewController {
 
     }
 
+    private void setDeleteOnClick(Node container){
+        container.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                HBox c = (HBox) event.getSource();
+                int index = c.getParent().getChildrenUnmodifiable().indexOf(c);
 
+                commandSequence.removeCommand(index);
+                commandBox.getChildren().remove(c);
+            }
+        });
+    }
 
     public void visitField(int x, int y) {
         gc_board.setFill(Color.BLUE);
@@ -547,6 +544,32 @@ public class GameOverviewController {
                 0.70 * fieldSize,
                 0.70 * fieldSize);
         gc_turtle.setEffect(null);
+
+        for (ImageView iv : commandImages){
+            iv.setVisible(false);
+        }
+        customCommand.setVisible(false);
+
+        for (Object command : DataGenerator.getAvailiableCommandsForLvl(GameAppController.lvl)){
+            switch ((String) command){
+                case "forward":{
+                    forwardImage.setVisible(true); break;
+
+                }
+                case "left":{
+                    leftImage.setVisible(true); break;
+                }
+                case "right":{
+                    rightImage.setVisible(true); break;
+                }
+                case "loop":{
+                    loopImage.setVisible(true); break;
+                }
+                case "custom":{
+                    customCommand.setVisible(true); break;
+                }
+            }
+        }
     }
 
     public void setAppController(GameAppController appController) {
