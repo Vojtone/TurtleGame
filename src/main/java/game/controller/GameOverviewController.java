@@ -161,7 +161,7 @@ public class GameOverviewController {
         //add a listener function for changing the selected level
         levelBox.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
             GameAppController.lvl = t1.intValue() + 1;
-            setData(DataGenerator.generateGameData(GameAppController.lvl));
+            setData(DataGenerator.generateGameData(GameAppController.lvl, boardData));
 //            commandSeq.setText("");
             info.setText(GameAppController.lvl + "/5");
             nextLevelImage.setVisible(false);
@@ -282,7 +282,7 @@ public class GameOverviewController {
         System.out.println("Reset event fired.");
 
         //reset data and wipe turtle memory
-        setData(DataGenerator.generateGameData(GameAppController.lvl));
+        setData(DataGenerator.generateGameData(GameAppController.lvl, boardData));
         boardData.getTurtle().wipeMemory();
         commandBox.getChildren().clear();
 //        commandSeq.setText("");
@@ -305,7 +305,7 @@ public class GameOverviewController {
         }
 
         //load next level
-        setData(DataGenerator.generateGameData(GameAppController.lvl));
+        setData(DataGenerator.generateGameData(GameAppController.lvl, boardData));
 //        commandSeq.setText("");
         info.setText(GameAppController.lvl + "/5");
 

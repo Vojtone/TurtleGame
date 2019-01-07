@@ -1,5 +1,6 @@
 package game.model.generator;
 
+import game.controller.GameAppController;
 import game.model.Board;
 import game.model.Orientation;
 import game.model.Turtle;
@@ -48,7 +49,7 @@ public class DataGenerator {
         } else return false;
     }
 
-    public final static Board generateGameData(int lvl) {
+    public final static Board generateGameData(int lvl, Board board) {
         if (lvl<=0)
             return null;
         String strJSON = "";
@@ -66,9 +67,19 @@ public class DataGenerator {
         JSONArray fieldsInfoJSON = lvlJSON.getJSONArray("fieldsInfo");
         List fieldsInfo = fieldsInfoJSON.toList();
 
-        Turtle turtle = new Turtle(turtleX, turtleY, Orientation.valueOf(turtleOrientation));
+        if (GameAppController.boardExists) {
+            board.getTurtle().setXProperty(turtleX);
+            board.getTurtle().setYProperty(turtleY);
+            board.getTurtle().setOrientationProperty(Orientation.valueOf(turtleOrientation));
 
-        return new Board(boardSize, turtle, fieldsInfo);
+            board.setBoardSize(boardSize);
+            board.setFields(fieldsInfo);
+            return board;
+        } else {
+            GameAppController.boardExists = true;
+            Turtle turtle = new Turtle(turtleX, turtleY, Orientation.valueOf(turtleOrientation));
+            return new Board(boardSize, turtle, fieldsInfo);
+        }
     }
 
 }

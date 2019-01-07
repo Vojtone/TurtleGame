@@ -36,6 +36,8 @@ public class Board {
         return boardSize;
     }
 
+    public void setBoardSize(int boardSize) { this.boardSize = boardSize; }
+
     public Turtle getTurtle() {
         return turtle;
     }
@@ -48,7 +50,18 @@ public class Board {
         return fields;
     }
 
-    public void setFields(BoardField[][] fields) {
+    public void setFields(List fieldsInfo) {
+        BoardField[][] fields = new BoardField[boardSize][boardSize];
+
+        for (int i = 0; i < boardSize; i++) {
+            for (int j = 0; j < boardSize; j++)
+                fields[i][j] = (((List)fieldsInfo.get(i)).get(j)).toString().charAt(0) == '#' ?
+                        new BoardField(true) : new BoardField(false);
+        }
+
+
+        fields[turtle.getY()][turtle.getX()].setVisited(true);
+
         this.fields = fields;
     }
 

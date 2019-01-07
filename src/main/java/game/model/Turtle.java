@@ -27,8 +27,8 @@ public class Turtle {
         return x;
     }
 
-    public void setXProperty(IntegerProperty x) {
-        this.x = x;
+    public void setXProperty(int x) {
+        this.x = new SimpleIntegerProperty(x);
     }
 
     public void setX(int x) {
@@ -39,8 +39,8 @@ public class Turtle {
         return y;
     }
 
-    public void setYProperty(IntegerProperty y) {
-        this.y = y;
+    public void setYProperty(int y) {
+        this.y=new SimpleIntegerProperty(y);
     }
 
     public int getY() {
@@ -55,8 +55,8 @@ public class Turtle {
         return orientation;
     }
 
-    public void setOrientationProperty(ObjectProperty<Orientation> orientation) {
-        this.orientation = orientation;
+    public void setOrientationProperty(Orientation orientation) {
+        this.orientation = new SimpleObjectProperty<Orientation>(orientation);
     }
 
     public Orientation getOrientation() {

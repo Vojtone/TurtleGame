@@ -14,6 +14,7 @@ public class GameAppController {
     private Stage primaryStage;
     private GameOverviewController ovc;
     public static int lvl = 1;
+    public static boolean boardExists = false;
 
     public GameAppController(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -31,7 +32,7 @@ public class GameAppController {
             // set initial data into controller
             GameOverviewController controller = loader.getController();
             controller.setAppController(this);
-            controller.setData(DataGenerator.generateGameData(GameAppController.lvl));
+            controller.setData(DataGenerator.generateGameData(GameAppController.lvl, null));
 
             ovc = controller;
             // add layout to a scene and show them all
