@@ -16,6 +16,7 @@ import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
@@ -183,20 +184,22 @@ public class GameOverviewController {
 
     @FXML
     private void handleAddCustomCommandAction(Event event){
-        //todo
-        CustomCommand customCommand = new CustomCommand(commandSequence.getCommands());
 
-        ImageView customCommandImage = new ImageView(turtleImage.getImage());
+        CustomCommand customCommandToAdd = new CustomCommand(commandSequence.getCommands());
+
+        ImageView customCommandImage = new ImageView(customCommand.getImage());
         customCommandImage.setFitWidth(50);
         customCommandImage.setFitHeight(50);
         customCommandImage.setEffect(shadow);
+        customCommandImage.setEffect(new ColorAdjust(20,0,0,0));
+
 
         customCommandImage.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
 
                 addCommandToBox(customCommandImage.getImage());
-                addCommand(customCommand);
+                addCommand(customCommandToAdd);
             }
         });
 
@@ -241,7 +244,7 @@ public class GameOverviewController {
     @FXML
     private void handleClearCommandSequenceAction(Event event) {
         commandBox.getChildren().clear();
-        commandSequence.clear();
+        commandSequence = new CommandSequence(boardData);
 //        commandSeq.setText("");
         System.out.println("Clear sequence event fired.");
     }

@@ -13,11 +13,13 @@ public class CustomCommand implements ITurtleCommand {
 
     @Override
     public boolean execute() {
-
-        for (ITurtleCommand command : commands) {
-            if (!command.execute()) return false;
+        if(!commands.isEmpty()) {
+            for (ITurtleCommand command : commands) {
+                if (!command.execute()) return false;
+            }
+            return true;
         }
-        return true;
+        return false;
     }
 
     @Override
