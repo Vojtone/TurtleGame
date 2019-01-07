@@ -17,8 +17,6 @@ import java.util.List;
 
 public class DataGenerator {
 
-
-
     private static JSONObject getStats() {
         String strJSON = "";
         try {
@@ -63,6 +61,9 @@ public class DataGenerator {
         int turtleX = lvlJSON.getInt("turtleX");
         int turtleY = lvlJSON.getInt("turtleY");
         String turtleOrientation = lvlJSON.getString("turtleOrientation");
+
+        JSONArray avaliableMovesJSON = lvlJSON.getJSONArray("commands");
+        List avaliableMoves = avaliableMovesJSON.toList();
 
         JSONArray fieldsInfoJSON = lvlJSON.getJSONArray("fieldsInfo");
         List fieldsInfo = fieldsInfoJSON.toList();
