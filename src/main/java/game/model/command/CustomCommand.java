@@ -2,7 +2,8 @@ package game.model.command;
 
 import java.util.List;
 
-public class CustomCommand implements ITurtleCommand {
+public class
+CustomCommand implements ITurtleCommand {
 
     List<ITurtleCommand> commands;
 

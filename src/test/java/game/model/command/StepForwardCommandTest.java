@@ -1,6 +1,7 @@
 package game.model.command;
 
 import game.model.Board;
+import game.model.Turtle;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -12,7 +13,6 @@ public class StepForwardCommandTest {
 
     @Mock
     private Board mockB;
-
     private StepForwardCommand stepForwardCommandUnderTest;
 
     @Before
@@ -40,6 +40,18 @@ public class StepForwardCommandTest {
 
         // Run the test
         final String result = stepForwardCommandUnderTest.getName();
+
+        // Verify the results
+        assertEquals(expectedResult, result);
+    }
+
+    @Test
+    public void testGetImageURL() {
+        // Setup
+        final String expectedResult = "./src/main/resources/images/forward.png";
+
+        // Run the test
+        final String result = stepForwardCommandUnderTest.getImageURL();
 
         // Verify the results
         assertEquals(expectedResult, result);

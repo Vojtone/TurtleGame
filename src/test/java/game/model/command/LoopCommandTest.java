@@ -45,4 +45,28 @@ public class LoopCommandTest {
         // Verify the results
         assertEquals(expectedResult, result);
     }
+
+    @Test
+    public void testGetImageURL() {
+        // Setup
+        final String expectedResult = "./src/main/resources/images/loop.png";
+
+        // Run the test
+        final String result = loopCommandUnderTest.getImageURL();
+
+        // Verify the results
+        assertEquals(expectedResult, result);
+    }
+
+    @Test
+    public void testGetIterations() {
+        // Setup
+        final Integer expectedResult = 0;
+
+        // Run the test
+        final Integer result = loopCommandUnderTest.getIterations();
+
+        // Verify the results
+        assertEquals(expectedResult, result);
+    }
 }
