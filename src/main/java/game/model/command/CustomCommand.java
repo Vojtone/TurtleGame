@@ -2,7 +2,8 @@ package game.model.command;
 
 import java.util.List;
 
-public class CustomCommand implements ITurtleCommand {
+public class
+CustomCommand implements ITurtleCommand {
 
     List<ITurtleCommand> commands;
 
@@ -13,11 +14,13 @@ public class CustomCommand implements ITurtleCommand {
 
     @Override
     public boolean execute() {
-
-        for (ITurtleCommand command : commands) {
-            if (!command.execute()) return false;
+        if(!commands.isEmpty()) {
+            for (ITurtleCommand command : commands) {
+                if (!command.execute()) return false;
+            }
+            return true;
         }
-        return true;
+        return false;
     }
 
     @Override

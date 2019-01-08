@@ -26,7 +26,10 @@ public class CommandSequence {
     }
 
     public void removeCommand(int index){
-        commands.remove(index);
+        if (commands.size() > 0)
+            commands.remove(index);
+        else
+            System.out.println("Size is zero");
     }
 
     public List<ITurtleCommand> getCommands(){

@@ -47,7 +47,7 @@ public class DataGenerator {
         } else return false;
     }
 
-    public final static Board generateGameData(int lvl, Board board) {
+    public final static JSONObject getLevelInfo(int lvl){
         if (lvl<=0)
             return null;
         String strJSON = "";
@@ -55,14 +55,24 @@ public class DataGenerator {
             strJSON = new String(Files.readAllBytes(Paths.get("./src/main/resources/levels/lvl" + lvl + ".json")));
         } catch (IOException e) { System.out.println(e); }
 
-        JSONObject lvlJSON = new JSONObject(strJSON);
+        return new JSONObject(strJSON);
+    }
+
+    public final static List<Object> getAvailiableCommandsForLvl(int lvl){
+        return getLevelInfo(lvl).getJSONArray("commands").toList();
+    }
+
+
+
+    public final static Board generateGameData(int lvl, Board board) {
+        JSONObject lvlJSON = getLevelInfo(lvl);
 
         int boardSize = lvlJSON.getInt("boardSize");
         int turtleX = lvlJSON.getInt("turtleX");
         int turtleY = lvlJSON.getInt("turtleY");
         String turtleOrientation = lvlJSON.getString("turtleOrientation");
 
-        JSONArray avaliableMovesJSON = lvlJSON.getJSONArray("avaliableMoves");
+        JSONArray avaliableMovesJSON = lvlJSON.getJSONArray("commands");
         List avaliableMoves = avaliableMovesJSON.toList();
 
         JSONArray fieldsInfoJSON = lvlJSON.getJSONArray("fieldsInfo");

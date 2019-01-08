@@ -44,4 +44,16 @@ public class TurnRightCommandTest {
         // Verify the results
         assertEquals(expectedResult, result);
     }
+
+    @Test
+    public void testGetImageURL() {
+        // Setup
+        final String expectedResult = "./src/main/resources/images/right.png";
+
+        // Run the test
+        final String result = turnRightCommandUnderTest.getImageURL();
+
+        // Verify the results
+        assertEquals(expectedResult, result);
+    }
 }

@@ -16,6 +16,7 @@ import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
@@ -31,7 +32,7 @@ import javafx.util.Duration;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.LinkedList;
+import java.util.*;
 
 import static java.lang.Math.*;
 
@@ -77,33 +78,18 @@ public class GameOverviewController {
     double fieldSize, border, padding;
 
     private Effect shadow = new DropShadow(20, 2, 2, Color.BLACK);
-
+    private List<Effect> customEffects = new LinkedList<Effect>();
+    private List<ImageView> commandImages = new LinkedList<ImageView>();
 
     @FXML
     private void initialize() {
-
-        ImageView[] commandImages = {forwardImage,leftImage,rightImage,loopImage};
+        commandImages.add(forwardImage);
+        commandImages.add(rightImage);
+        commandImages.add(leftImage);
+        commandImages.add(loopImage);
 
         for (ImageView iv : commandImages){
-            iv.setOnDragDetected(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    Dragboard db = iv.startDragAndDrop(TransferMode.ANY);
-                    ClipboardContent content = new ClipboardContent();
-                    content.putImage(iv.getImage());
-                    db.setContent(content);
-                    event.consume();
-                }
-            });
-
-            iv.setOnDragDone(new EventHandler<DragEvent>() {
-                @Override
-                public void handle(DragEvent event) {
-                    if(event.getAcceptedTransferMode()!=null){
-                        iv.getOnMouseClicked().handle(null);
-                    }
-                }
-            });
+            setDragDrop(iv);
         }
 
 
@@ -170,6 +156,28 @@ public class GameOverviewController {
 
     }
 
+    private void setDragDrop(ImageView iv){
+        iv.setOnDragDetected(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                Dragboard db = iv.startDragAndDrop(TransferMode.ANY);
+                ClipboardContent content = new ClipboardContent();
+                content.putImage(iv.getImage());
+                db.setContent(content);
+                event.consume();
+            }
+        });
+
+        iv.setOnDragDone(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+                if(event.getAcceptedTransferMode()!=null){
+                    iv.getOnMouseClicked().handle(null);
+                }
+            }
+        });
+    }
+
     public void addCommand(ITurtleCommand command) {
         commandSequence.addCommand(command);
 //        commandSeq.setText(commandSeq.getText() + command.getName());
@@ -183,24 +191,30 @@ public class GameOverviewController {
 
     @FXML
     private void handleAddCustomCommandAction(Event event){
-        //todo
-        CustomCommand customCommand = new CustomCommand(commandSequence.getCommands());
 
-        ImageView customCommandImage = new ImageView(turtleImage.getImage());
+        CustomCommand customCommandToAdd = new CustomCommand(commandSequence.getCommands());
+
+        ImageView customCommandImage = new ImageView(customCommand.getImage());
         customCommandImage.setFitWidth(50);
         customCommandImage.setFitHeight(50);
-        customCommandImage.setEffect(shadow);
+        ColorAdjust hue = new ColorAdjust(random(),0,0,0);
+        hue.setInput(shadow);
+        customEffects.add(hue);
+        customCommandImage.setEffect(hue);
+
 
         customCommandImage.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-
-                addCommandToBox(customCommandImage.getImage());
-                addCommand(customCommand);
+                int effectIndex = customCommandsBox.getChildren().indexOf(customCommandImage);
+                addCommandToBox(customCommandImage.getImage(),customEffects.get(effectIndex));
+                addCommand(customCommandToAdd);
             }
         });
 
         customCommandsBox.getChildren().addAll(customCommandImage);
+        setDragDrop(customCommandImage);
+        handleResetAction(null);
     }
 
     @FXML
@@ -208,7 +222,7 @@ public class GameOverviewController {
         commandSequence.addCommand(new StepForwardCommand(boardData));
 //        commandSeq.setText(commandSeq.getText() + "F\n");
         System.out.println("Step forward event fired.");
-        addCommandToBox(forwardImage.getImage());
+        addCommandToBox(forwardImage.getImage(),null);
     }
 
     @FXML
@@ -216,7 +230,7 @@ public class GameOverviewController {
         commandSequence.addCommand(new TurnLeftCommand(boardData));
 //        commandSeq.setText(commandSeq.getText() + "L\n");
         System.out.println("Turn left event fired.");
-        addCommandToBox(leftImage.getImage());
+        addCommandToBox(leftImage.getImage(),null);
     }
 
     @FXML
@@ -224,7 +238,7 @@ public class GameOverviewController {
         commandSequence.addCommand(new TurnRightCommand(boardData));
 //        commandSeq.setText(commandSeq.getText() + "R\n");
         System.out.println("Turn right event fired.");
-        addCommandToBox(rightImage.getImage());
+        addCommandToBox(rightImage.getImage(),null);
     }
 
     @FXML
@@ -241,7 +255,7 @@ public class GameOverviewController {
     @FXML
     private void handleClearCommandSequenceAction(Event event) {
         commandBox.getChildren().clear();
-        commandSequence.clear();
+        commandSequence = new CommandSequence(boardData);
 //        commandSeq.setText("");
         System.out.println("Clear sequence event fired.");
     }
@@ -320,7 +334,7 @@ public class GameOverviewController {
         appController.showLoopDialog();
     }
 
-    private void addCommandToBox(Image image) {
+    private void addCommandToBox(Image image, Effect effect) {
         //prepare ImageView
         ImageView imageToAdd = new ImageView();
         imageToAdd.setEffect(shadow);
@@ -328,6 +342,10 @@ public class GameOverviewController {
         imageToAdd.setFitWidth(50);
         imageToAdd.setImage(image);
         imageToAdd.setVisible(true);
+
+        if(effect!=null){
+            imageToAdd.setEffect(effect);
+        }
 
         //prepare container for ImageView, set padding and insert image
         HBox container = new HBox();
@@ -339,18 +357,8 @@ public class GameOverviewController {
         commandBox.getChildren().addAll(container);
 
         //on click delete
-        container.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                HBox c = (HBox) event.getSource();
-                int index = c.getParent().getChildrenUnmodifiable().indexOf(c);
-
-                commandSequence.removeCommand(index);
-                commandBox.getChildren().remove(c);
-            }
-        });
+        setDeleteOnClick(container);
     }
-
 
     public void addLoopToBox(LoopCommand loop) {
         try { //loopBox - box to add to commands
@@ -386,16 +394,7 @@ public class GameOverviewController {
             iters.setEffect(new DropShadow(5,Color.BLACK));
             loopBox.getChildren().add(iters);
 
-            loopBox.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    HBox c = (HBox) event.getSource();
-                    int index = c.getParent().getChildrenUnmodifiable().indexOf(c);
-
-                    commandSequence.removeCommand(index);
-                    commandBox.getChildren().remove(c);
-                }
-            });
+            setDeleteOnClick(loopBox);
 
             //add loopBox to commandBox
             commandBox.getChildren().add(loopBox);
@@ -405,7 +404,18 @@ public class GameOverviewController {
 
     }
 
+    private void setDeleteOnClick(Node container){
+        container.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                HBox c = (HBox) event.getSource();
+                int index = c.getParent().getChildrenUnmodifiable().indexOf(c);
 
+                commandSequence.removeCommand(index);
+                commandBox.getChildren().remove(c);
+            }
+        });
+    }
 
     public void visitField(int x, int y) {
         gc_board.setFill(Color.BLUE);
@@ -539,6 +549,32 @@ public class GameOverviewController {
                 0.70 * fieldSize,
                 0.70 * fieldSize);
         gc_turtle.setEffect(null);
+
+        for (ImageView iv : commandImages){
+            iv.setVisible(false);
+        }
+        customCommand.setVisible(false);
+
+        for (Object command : DataGenerator.getAvailiableCommandsForLvl(GameAppController.lvl)){
+            switch ((String) command){
+                case "forward":{
+                    forwardImage.setVisible(true); break;
+
+                }
+                case "left":{
+                    leftImage.setVisible(true); break;
+                }
+                case "right":{
+                    rightImage.setVisible(true); break;
+                }
+                case "loop":{
+                    loopImage.setVisible(true); break;
+                }
+                case "custom":{
+                    customCommand.setVisible(true); break;
+                }
+            }
+        }
     }
 
     public void setAppController(GameAppController appController) {

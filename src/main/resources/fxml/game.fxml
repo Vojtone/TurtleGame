@@ -16,7 +16,7 @@
 <BorderPane prefHeight="900.0" prefWidth="800.0" style="-fx-background-color: #AACCCC;" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="game.controller.GameOverviewController">
     <top>
         <!--<Label alignment="BASELINE_CENTER" prefHeight="60" prefWidth="800" style="-fx-border-style: solid; -fx-border-width: 0 0 1 0" />-->
-        <ChoiceBox fx:id="levelBox" maxHeight="60.0" maxWidth="60.0" minHeight="60.0" minWidth="60.0" value="level">
+        <ChoiceBox fx:id="levelBox" maxHeight="60.0" maxWidth="60.0" minHeight="60.0" minWidth="200.0" value="level">
          <BorderPane.margin>
             <Insets bottom="5.0" left="200.0" right="200.0" top="5.0" />
          </BorderPane.margin></ChoiceBox>
@@ -89,7 +89,7 @@
                   <Insets bottom="5.0" />
                </padding>
             </HBox>
-            <ImageView fx:id="customCommand" onMouseClicked="#handleAddCustomCommandAction" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="customCommand" fitHeight="50.0" fitWidth="50.0" onMouseClicked="#handleAddCustomCommandAction" pickOnBounds="true" preserveRatio="true">
                <VBox.margin>
                   <Insets bottom="5.0" />
                </VBox.margin>
@@ -97,7 +97,7 @@
                   <DropShadow />
                </effect>
                <image>
-                  <Image url="@../images/turtle.png" />
+                  <Image url="@../images/custom.png" />
                </image>
             </ImageView>
             <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0">

@@ -12,6 +12,7 @@
   "commands": [
     "forward",
     "right",
-    "left"
+    "left",
+    "loop"
   ]
 }
